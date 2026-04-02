@@ -32,6 +32,12 @@ def organize(folder, dry_run=False):
             new_folder.mkdir(exist_ok=True)
 
             new_location = new_folder / file.name
+            
+            counter = 1
+            
+            while new_location.exists():
+                new_location = new_folder / f"{file.stem}_{counter}{file.suffix}"
+                counter += 1
 
             if dry_run:
                 print(f"[DRY RUN] {file.name} → {category}/")
