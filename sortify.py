@@ -2,6 +2,7 @@ import argparse
 import shutil
 from pathlib import Path
 import logging
+from collections import Counter
 
 # Define file categories
 CATEGORIES = {
@@ -15,6 +16,7 @@ CATEGORIES = {
     "Code": {".py", ".js", ".ts", ".java", ".html", ".css", ".json", ".sql", ".cpp", ".c", ".cs", ".rb", ".php"},
 }
 
+#Log the file operations
 def setup_logging(folder_path):
     log_file = folder_path / "sortify.log"
     logging.basicConfig(
@@ -26,13 +28,17 @@ def setup_logging(folder_path):
         ]
     )
 
+# Determine the category of a file
 def get_category(file):
     for category, extensions in CATEGORIES.items():
         if file.suffix.lower() in extensions:
             return category
     return "Other"
 
+# Organize files into categories
 def organize(folder, dry_run=False):
+    summary = Counter()
+
     folder_path = Path(folder)
 
     if not folder_path.exists() or not folder_path.is_dir():
@@ -51,7 +57,11 @@ def organize(folder, dry_run=False):
             new_location = new_folder / file.name
             
             counter = 1
-            
+
+            #Summary tracker
+            summary[category] += 1
+            summary["total"] += 1
+
             while new_location.exists():
                 new_location = new_folder / f"{file.stem}_{counter}{file.suffix}"
                 counter += 1
@@ -63,6 +73,15 @@ def organize(folder, dry_run=False):
                 shutil.move(str(file), str(new_location))
                 print(f"Moved {file.name} → {category}/")
                 logging.info("Moved %s -> %s", file.name, new_location)
+    
+    #Summary Printing
+    print("\n===== SUMMARY =====")
+
+    for category, count in summary.items():
+        if category != "total":
+            print(f"{category}: {count}")
+
+    print(f"Total: {summary['total']} files processed")
 
 def main():
     parser = argparse.ArgumentParser()
