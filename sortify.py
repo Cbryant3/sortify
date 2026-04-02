@@ -1,6 +1,7 @@
 import argparse
 import shutil
 from pathlib import Path
+import logging
 
 # Define file categories
 CATEGORIES = {
@@ -14,6 +15,16 @@ CATEGORIES = {
     "Code": {".py", ".js", ".ts", ".java", ".html", ".css", ".json", ".sql", ".cpp", ".c", ".cs", ".rb", ".php"},
 }
 
+def setup_logging(folder_path):
+    log_file = folder_path / "sortify.log"
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.FileHandler(log_file, encoding="utf-8"),
+            logging.StreamHandler()
+        ]
+    )
 
 def get_category(file):
     for category, extensions in CATEGORIES.items():
@@ -23,6 +34,12 @@ def get_category(file):
 
 def organize(folder, dry_run=False):
     folder_path = Path(folder)
+
+    if not folder_path.exists() or not folder_path.is_dir():
+        print("Error: Folder does not exist.")
+        return
+    
+    setup_logging(folder_path)
 
     for file in folder_path.iterdir():
         if file.is_file():
@@ -41,9 +58,11 @@ def organize(folder, dry_run=False):
 
             if dry_run:
                 print(f"[DRY RUN] {file.name} → {category}/")
+                logging.info("[DRY RUN] %s -> %s", file.name, new_location)
             else:
                 shutil.move(str(file), str(new_location))
                 print(f"Moved {file.name} → {category}/")
+                logging.info("Moved %s -> %s", file.name, new_location)
 
 def main():
     parser = argparse.ArgumentParser()
