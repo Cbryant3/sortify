@@ -64,6 +64,7 @@ def organize(folder, dry_run=False, recursive=False):
                 continue
 
             category = get_category(file)
+
             new_folder = folder_path / category
             new_folder.mkdir(exist_ok=True)
 
@@ -75,7 +76,7 @@ def organize(folder, dry_run=False, recursive=False):
             summary[category] += 1
             summary["total"] += 1
 
-            
+
             while new_location.exists():
                 new_location = new_folder / f"{file.stem}_{counter}{file.suffix}"
                 counter += 1
@@ -107,7 +108,7 @@ def main():
 
     args = parser.parse_args()
 
-    organize(args.folder, args.dry_run)
+    organize(args.folder, args.dry_run, args.recursive)
 
 if __name__ == "__main__":
     main()
