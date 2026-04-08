@@ -16,7 +16,7 @@ CATEGORIES = {
     "Code": {".py", ".js", ".ts", ".java", ".html", ".css", ".json", ".sql", ".cpp", ".c", ".cs", ".rb", ".php"},
 }
 
-IGNORE_FILES = {".keep", "README.md", "sortify.log"}
+IGNORE_FILES = {".keep", "README.md", "sortify.log","test_data", "test_recursive"}
 
 #Log the file operations
 def setup_logging(folder_path):

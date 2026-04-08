@@ -1,2 +1,4 @@
 test_data/*
 !test_data/.keep
+test_recursive/*
+!test_recursive/.keep
